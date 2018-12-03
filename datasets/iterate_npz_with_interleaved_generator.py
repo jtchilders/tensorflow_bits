@@ -1,4 +1,4 @@
-import glob
+import glob,time
 import tensorflow as tf
 import numpy as np
 
@@ -17,6 +17,18 @@ def get_data(filename):
       yield features[i],labels[i]
 
 
+def sim_get_data(filename):
+   # simulate reading compressed data
+   print('reading input file')
+   time.sleep(4)
+   features = np.ones((10,16,256,9600))
+   labels = np.ones((10,1,10))
+
+   for i in range(features.shape[0]):
+      yield features[i],labels[i]
+
+
+
 # create dataset of filenames
 ds = tf.data.Dataset.from_tensor_slices(filelist)
 # use interleave to create multiple threads that feed files
@@ -24,7 +36,7 @@ ds = tf.data.Dataset.from_tensor_slices(filelist)
 # each file in round robin style so each are exhausted at the same
 # time and therefore the file reading all happens in sync, kinda
 # negates the idea...
-ds = ds.interleave(lambda filename: tf.data.Dataset.from_generator(get_data,(tf.float64,tf.int64),(tf.TensorShape([ 16, 256, 9600]), tf.TensorShape([1,10])),args=([filename])),
+ds = ds.interleave(lambda filename: tf.data.Dataset.from_generator(sim_get_data,(tf.float64,tf.int64),(tf.TensorShape([ 16, 256, 9600]), tf.TensorShape([1,10])),args=([filename])),
       6,1,3)
 # set batch size
 ds = ds.batch(2)

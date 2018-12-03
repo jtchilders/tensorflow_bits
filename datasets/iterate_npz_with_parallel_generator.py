@@ -52,9 +52,6 @@ def parallel_gen():
 
    p = mp.Pool(5)
    enum = p.imap_unordered(serve_file,filelist)
-   print('enum = %s' % enum)
-
-   print('enum = %s' % dir(enum))
    p.close()
    while True:
 
